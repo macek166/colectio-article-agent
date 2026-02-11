@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "neon": {
+      "command": "npx",
+      "args": ["-y", "mcp-remote", "https://mcp.neon.tech/mcp"],
+      "disabled": false,
+      "autoApprove": []
+    }
+  }
+}
