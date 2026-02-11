@@ -122,12 +122,13 @@ class NeonDatabaseClient:
             logger.error(f"Failed to get existing topics: {e}")
             return []
     
-    async def save_topic(self, title: str, category: str) -> str:
+    async def save_topic(self, title: str, category: str, source_url: str = None) -> str:
         """Save a new topic to the database.
         
         Args:
             title: Topic title
             category: Category (pokemon, hockey, soccer)
+            source_url: Optional source URL
             
         Returns:
             Topic ID (UUID)
@@ -137,12 +138,12 @@ class NeonDatabaseClient:
         try:
             async with self.pool.acquire() as conn:
                 query = """
-                    INSERT INTO topics (title, category, status)
-                    VALUES ($1, $2, 'pending')
+                    INSERT INTO topics (title, category, source_url, status)
+                    VALUES ($1, $2, $3, 'pending')
                     ON CONFLICT (title) DO NOTHING
                     RETURNING id
                 """
-                result = await conn.fetchrow(query, title, category)
+                result = await conn.fetchrow(query, title, category, source_url)
                 if result:
                     topic_id = str(result['id'])
                     logger.info(f"Saved topic: {title} (ID: {topic_id})")

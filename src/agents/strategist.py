@@ -58,6 +58,7 @@ class TopicCandidate(BaseModel):
 
     title: str = Field(..., min_length=10, max_length=200)
     category: str = Field(..., pattern="^(pokemon|hockey|soccer)$")
+    source_url: str | None = Field(default=None, description="The specific source URL for this topic")
     sources: List[str] = Field(default_factory=list)
     seo_score: float = Field(default=0.0, ge=0.0, le=100.0)
     keywords: List[str] = Field(default_factory=list)
@@ -525,21 +526,23 @@ class StrategyPhase:
         else:
             source_instruction = f"""
 3. **GENERATE TOPICS**: Based on the news above, generate {count} interesting article topics.
-   - Use the REAL URLs from the source text.
-   - DO NOT invent "example.com" links.
-   - Ideally focus on Physical Cards, but if you are unsure, include it. The Researcher will validate it later.
+   - You MUST select a specific source article from the provided "SOURCE MATERIAL" for each topic.
+   - You MUST include the exact `source_url` from that source in your JSON output.
+   - The topic must be directly based on that specific article.
             """
             requirements = f"""
 - **{category.upper()} TOPICS ONLY**: All topics must be strictly about **{category}**.
 - **PHYSICAL CARDS ONLY (STRICT)**: 
    - ❌ NEVER generate topics about video games (NHL 24, FIFA 25).
-- **SOURCE BASED**: Link every topic to its source URL.
+- **MANDATORY SOURCE**:
+   - Every topic MUST have a valid `source_url` field pointing to one of the URLs listed in the source material.
+   - Do NOT invent URLs. Use the ones provided.
 - **BE SPECIFIC**: Use precise set names.
 """
 
         prompt = f"""You are a content strategist for a trading card platform. 
 Current Date: {current_date_str}.
-Your goal is to create high-quality article topics.
+Your goal is to create high-quality article topics based on REAL verified sources.
 
 SOURCE MATERIAL (FULL TEXT):
 {full_source_content if not fallback_mode else "No recent news available. Using EXPERT KNOWLEDGE mode."}
@@ -808,6 +811,7 @@ Generate EXACTLY {count} varied, specific, and interesting topics now:"""
                     candidate = TopicCandidate(
                         title=topic_title,
                         category=category,
+                        source_url=source_url if source_url else None,
                         sources=[source_url] if source_url else [],
                         seo_score=seo_score,
                         keywords=seo_insights.keywords[:5],

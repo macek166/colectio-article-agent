@@ -348,9 +348,11 @@ class Orchestrator:
                 topic_title = topic.title
                 writing_style = str(getattr(topic, 'writing_style', 'investor'))
                 category = getattr(topic, 'category', 'pokemon')
-                # Extract source_url and cached_content
-                sources_list = getattr(topic, 'sources', [])
-                source_url = sources_list[0] if sources_list and len(sources_list) > 0 else None
+                # Extract source_url (prefer dedicated field, fallback to list)
+                source_url = getattr(topic, 'source_url', None)
+                if not source_url:
+                    sources_list = getattr(topic, 'sources', [])
+                    source_url = sources_list[0] if sources_list and len(sources_list) > 0 else None
                 cached_content = getattr(topic, 'cached_content', None)
                 
                 # Anti-Hallucination Check
@@ -484,11 +486,14 @@ class Orchestrator:
                 topic_title = topic.title
                 # TRUST THE TOPIC OBJECT'S CATEGORY
                 category = getattr(topic, 'category', 'pokemon')
+                # Extract source_url
+                source_url = getattr(topic, 'source_url', None)
             else:
                 topic_title = str(topic)
                 # Fallback: Default to pokemon if no metadata available
                 # (This should rarely happen given Strategist implementation)
                 category = 'pokemon'
+                source_url = None
                 logger.warning(
                     "Topic '%s' lacks metadata. Defaulting category to '%s'.", 
                     topic_title, category
@@ -500,6 +505,7 @@ class Orchestrator:
                     id=uuid4(),
                     title=topic_title,
                     category=category,
+                    source_url=source_url,
                     created_at=time.strftime('%Y-%m-%d %H:%M:%S'),
                     status='pending'
                 )

@@ -188,8 +188,8 @@ class NeonDBClient:
         logger.info("Creating new topic: %s (category: %s)", record.title, record.category)
 
         query = """
-            INSERT INTO topics (id, title, category, created_at, status)
-            VALUES (%(id)s, %(title)s, %(category)s, %(created_at)s, %(status)s)
+            INSERT INTO topics (id, title, category, source_url, created_at, status)
+            VALUES (%(id)s, %(title)s, %(category)s, %(source_url)s, %(created_at)s, %(status)s)
             RETURNING id
         """
 
@@ -197,6 +197,7 @@ class NeonDBClient:
             'id': str(record.id),
             'title': record.title,
             'category': record.category,
+            'source_url': record.source_url,
             'created_at': record.created_at,
             'status': record.status
         }

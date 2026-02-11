@@ -111,3 +111,13 @@ Pokud chcete agenta spustit na novém počítači nebo serveru, postupujte takto
 *   `src/tools/`: Nástroje, které agenti používají (`seo_tools.py` pro hledání, `neon_client.py` pro DB).
 *   `src/config/`: Nastavení a prompty (`web_sources.py` obsahuje seznam URL, `writing_styles.py` definuje styly psaní).
 *   `.env`: **Vaše tajná hesla a klíče.** (Nikdy neposílejte nikomu cizímu!)
+
+## 🔒 5. Validace zdrojů (Source Validation - Feb 2026)
+
+Nový systém (únor 2026) zavádí přísnou validaci zdrojů:
+1.  **Strategist** při generování témat MUSÍ vybrat konkrétní URL z nalezených výsledků Search Tools.
+2.  Toto URL je uloženo v databázi (`source_url` sloupec) spolu s tématem.
+3.  **Researcher** obdrží toto URL přímo a použije ho jako primární zdroj pro psaní článku. 
+    *   Tím se eliminuje riziko, že Researcher nenajde vhodný zdroj pro vygenerované téma.
+    *   Zamezuje se "halucinacím", kdy AI vymyslí téma, ke kterému neexistuje článek.
+4.  Pokud Search Tool selže a Strategist jede v "fallback" režimu (Expert Knowledge), `source_url` zůstane prázdné a Researcher se pokusí najít zdroje sám (nebo použije obecné znalosti).

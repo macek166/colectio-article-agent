@@ -71,12 +71,13 @@ class TopicManager:
             logger.error(f"Failed to deduplicate topics: {e}")
             return new_topics  # Return original list if deduplication fails
     
-    def save_topic(self, title: str, category: str) -> str:
+    def save_topic(self, title: str, category: str, source_url: str = None) -> str:
         """Save a new topic to database.
         
         Args:
             title: Topic title
             category: Category (pokemon, hockey, soccer)
+            source_url: Optional source URL for the topic
             
         Returns:
             Topic ID (UUID)
@@ -84,7 +85,7 @@ class TopicManager:
         try:
             loop = self._get_loop()
             return loop.run_until_complete(
-                self.client.save_topic(title, category)
+                self.client.save_topic(title, category, source_url)
             )
         except Exception as e:
             logger.error(f"Failed to save topic: {e}")

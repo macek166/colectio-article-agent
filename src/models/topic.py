@@ -21,6 +21,7 @@ class Topic(BaseModel):
     id: UUID = Field(default_factory=uuid4)
     title: str = Field(..., min_length=10, max_length=200)
     category: Literal['pokemon', 'hockey', 'soccer']
+    source_url: str | None = Field(default=None, description="The validated source URL for this topic")
     created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     status: Literal['pending', 'in_progress', 'completed', 'failed'] = 'pending'
 
@@ -56,6 +57,7 @@ class TopicRecord(BaseModel):
     id: UUID = Field(default_factory=uuid4)
     title: str
     category: Literal['pokemon', 'hockey', 'soccer']
+    source_url: str | None = Field(default=None)
     created_at: str
     status: Literal['pending', 'in_progress', 'completed', 'failed'] = 'pending'
 
