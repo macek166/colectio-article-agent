@@ -909,7 +909,8 @@ Generate EXACTLY {count} varied, specific, and interesting topics now:"""
             return True
 
         # REDUCED: Only check against last 50 topics (to allow more variety)
-        recent_topics = existing_topics[:50]
+        # Ensure it's a list before slicing (might be passed as a set)
+        recent_topics = list(existing_topics)[:50]
         
         try:
             prompt = f"""DUPLICITY CHECK
