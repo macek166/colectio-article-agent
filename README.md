@@ -11,12 +11,14 @@ Systém využívá architekturu **CrewAI** k orchestraci několika specializovan
 ### 🔄 Fáze 1: Strategie a Výzkum (Strategist & Researcher)
 1.  **Strategist Agent:**
     *   Podívá se na internet (přes `SerperDevTool`) na nejnovější trendy a novinky v dané kategorii (např. "latest pokemon card news").
+    *   **Vybere konkrétní zdrojový článek (URL)** pro každé téma, aby byla zajištěna ověřitelnost (**Source Validation**).
     *   Zkontroluje databázi (dříve vygenerovaná témata), aby nedělal duplicity.
-    *   Navrhne nová témata pro články.
+    *   Uloží téma i s `source_url` do databáze.
 2.  **Researcher Agent:**
-    *   Pro vybrané téma provede hloubkový průzkum.
-    *   Najde nejlepší zdrojový článek (Master Source URL).
-    *   Stáhne **plný obsah** zdrojového článku a extrahuje klíčová fakta a investiční postřehy.
+    *   Obdrží `source_url` přímo od Strategista (**Direct Source Mode**).
+    *   Stáhne **plný obsah** tohoto konkrétního článku.
+    *   Pokud zdroj chybí (fallback), provede vlastní hloubkový průzkum.
+    *   Extrahuje klíčová fakta a investiční postřehy.
 
 ### ✍️ Fáze 2: Psaní (Writer)
 3.  **Writer Agent:**
